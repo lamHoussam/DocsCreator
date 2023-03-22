@@ -5,7 +5,26 @@ output_file = filename.split(".")[0] + ".md"
 
 
 ser_members_dict = {}
+namespace = ""
+class_values = []
 
+def processs_class_input(t):
+    el_arr = str(t.value).split(" ")
+    ind = el_arr.index("class") + 1
+    class_name = el_arr[ind]
+
+    base_class = ""
+    try:
+        ind = el_arr.index(":") + 1
+        base_class = el_arr[ind]
+    except ValueError:
+        pass
+    
+    class_description = "My Class"    
+    return [class_name, base_class, class_description]
+
+def process_namespace_input(t):
+    return str(t.value).split(" ")[1]
 
 def process_ser_members_input(t):
     var_code_snip = str(t.value)
@@ -44,7 +63,6 @@ t_BRACKETS = "[{}]"
 
 def t_NAMESPACE(t):
     r'^namespace\s+([^\s{]+)'
-    t.value = str(t.value).split(" ")[1]
     return t
 
 
@@ -83,8 +101,13 @@ def main():
 
         if (tok.type == 'SERIALIZEDMEMBER'):
             process_ser_members_input(tok)
+        elif (tok.type == 'CLASS'):
+            class_values = processs_class_input(tok)
+        elif (tok.type == 'NAMESPACE'):
+            namespace = process_namespace_input(tok)
         # print(tok.type, tok.value, tok.lineno, tok.lexpos)
-
+    print("Class values : " + str(class_values))
+    print("Namespace : " + namespace)
     print(ser_members_dict)
 
 
