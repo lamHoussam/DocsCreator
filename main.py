@@ -1,7 +1,9 @@
 import ply.lex as lex
 
-filename = "TestFile.cs"
+filename = "Test.cs"
 output_file = filename.split(".")[0] + ".md"
+
+class_def_md = "## $CLASS$ : $BASE$\n### Namespace : $NAMESPACE$\n### DESCRIPTION\n$DESCRIPTION$\n"
 
 
 ser_members_dict = {}
@@ -110,6 +112,14 @@ def main():
     print("Namespace : " + namespace)
     print(ser_members_dict)
 
+    with open(output_file, "w") as f:
+        class_def_md = f"## {class_values[0]} : {class_values[1]}\n### Namespace : {namespace}\n### DESCRIPTION\n{class_values[2]}\n"
+        f.write(class_def_md)
+        class_def_md = f'### Properties\n'
+        for var_name, var in ser_members_dict.items():
+            class_def_md += f'`{var_name}` ({var[2]})\n\n{var[0]}\n```csharp\n{var[1]}\n```\n'
+
+        f.write(class_def_md)
 
 
 if __name__ == '__main__':

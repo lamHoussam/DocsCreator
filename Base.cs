@@ -1,9 +1,0 @@
-namespace Name
-{
-
-    class Base
-    {
-        
-    }
-    
-}
