@@ -1,6 +1,6 @@
 *.cs
 *.md
-
+API/*
 
 !/Readme.md
 # Byte-compiled / optimized / DLL files

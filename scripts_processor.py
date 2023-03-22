@@ -24,8 +24,13 @@ def process_methods_input(t):
     method_description = "My method"
     method_name = el_arr[2]
 
-    if method_name[-1] == ')':
-        method_name = method_name[0:-2]
+    method_name.replace(" ", "")
+
+    try:
+        ind = method_name.index("(")
+        method_name = method_name[0:ind]
+    except ValueError:
+        pass
 
     return method_name, [method_description, method_snip] 
 

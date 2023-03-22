@@ -1,6 +1,11 @@
 import ply.lex as lex
 from scripts_processor import *
 
+
+import os
+
+folder_name = "API"
+
 # Tokens
 tokens = (
     'SERIALIZEDMEMBER',
@@ -52,7 +57,7 @@ def generate_md_file(filename, lexer):
     namespace = ""
     methods_dict = {}
 
-    output_file = str(filename).split(".")[0] + ".md"
+    output_file = folder_name + "/" + str(filename).split(".")[0] + ".md"
     file = open(filename, "r")
     data = file.read()
     
@@ -101,6 +106,12 @@ def generate_md_file(filename, lexer):
 
 def main():
     lexer = lex.lex()
+
+    directory = folder_name
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     # Get C# files and generate respective mds
     generate_md_file("Test.cs", lexer)
 
