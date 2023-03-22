@@ -1,9 +1,9 @@
 import ply.lex as lex
 from scripts_processor import *
 
-import os
+from os import makedirs, path
 from glob import glob
-
+import sys
 
 folder_name = "API"
 
@@ -51,15 +51,17 @@ def t_error(t):
 
 
 
-def generate_md_file(filename, lexer):
+def generate_md_file(file_path, lexer):
 
     ser_members_dict = {}
     class_values = []
     namespace = ""
     methods_dict = {}
 
-    output_file = folder_name + "/" + str(filename).split(".")[0] + ".md"
-    file = open(filename, "r")
+    filename = path.basename(file_path)
+
+    output_file = path.join(folder_name, str(filename).split(".")[0] + ".md")
+    file = open(file_path, "r")
     data = file.read()
     
     lexer.input(data)
@@ -104,21 +106,45 @@ def generate_md_file(filename, lexer):
 
         f.write(class_def_md)
 
+def usage():
+    print("Usage : \npython main.py [--options] <project_path>")
+
 
 def main():
     lexer = lex.lex()
 
+    project_path = "./"
+    recursive = False
+    
+    # print(sys.argv)
+    if len(sys.argv) == 2:
+        project_path = sys.argv[1]
+        if not path.exists(project_path):
+            usage()
+            exit(1)
+    elif len(sys.argv) >= 3:
+        if sys.argv[1] == "--recursive":
+            recursive = True
+        project_path = sys.argv[2]
+        if not path.exists(project_path):
+            usage()
+            exit(1)
+    
     directory = folder_name
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not path.exists(directory):
+        makedirs(directory)
 
-    # Get C# files and generate respective mds
-    cs_files = glob('./**/*.cs', recursive=True)
+    # Get C# files and generate respective md files
+    # TODO: Fix rec
+    project_path = path.join(project_path, "*.cs")
+    cs_files = glob(project_path, recursive=recursive)
+    
+    print(project_path)
+    print(cs_files)
     for file in cs_files:
-        file_name = file[2::]
-        print(file_name)
-        generate_md_file(file_name, lexer)
+        print(path.basename(file))
+        generate_md_file(file, lexer)
 
 
 
