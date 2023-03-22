@@ -1,8 +1,9 @@
 import ply.lex as lex
 from scripts_processor import *
 
-
 import os
+from glob import glob
+
 
 folder_name = "API"
 
@@ -45,7 +46,7 @@ t_ignore = ' \t\n\r'
 
 # Error handling rule
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    # print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 
@@ -113,7 +114,13 @@ def main():
         os.makedirs(directory)
 
     # Get C# files and generate respective mds
-    generate_md_file("Test.cs", lexer)
+    cs_files = glob('./**/*.cs', recursive=True)
+    for file in cs_files:
+        file_name = file[2::]
+        print(file_name)
+        generate_md_file(file_name, lexer)
+
+
 
 if __name__ == '__main__':
     main()
