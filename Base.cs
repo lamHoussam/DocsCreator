@@ -1,0 +1,9 @@
+namespace Name
+{
+
+    class Base
+    {
+        
+    }
+    
+}
