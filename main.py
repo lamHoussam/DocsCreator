@@ -1,44 +1,5 @@
 import ply.lex as lex
-
-filename = "Test.cs"
-output_file = filename.split(".")[0] + ".md"
-
-class_def_md = "## $CLASS$ : $BASE$\n### Namespace : $NAMESPACE$\n### DESCRIPTION\n$DESCRIPTION$\n"
-
-
-ser_members_dict = {}
-namespace = ""
-class_values = []
-
-def processs_class_input(t):
-    el_arr = str(t.value).split(" ")
-    ind = el_arr.index("class") + 1
-    class_name = el_arr[ind]
-
-    base_class = ""
-    try:
-        ind = el_arr.index(":") + 1
-        base_class = el_arr[ind]
-    except ValueError:
-        pass
-    
-    class_description = "My Class"    
-    return [class_name, base_class, class_description]
-
-def process_namespace_input(t):
-    return str(t.value).split(" ")[1]
-
-def process_ser_members_input(t):
-    var_code_snip = str(t.value)
-    el_arr = var_code_snip.split(" ")
-    var_name = el_arr[-1][0:-1]
-    var_type = el_arr[-2]
-    var_description = "Ser Member"
-
-    ser_members_dict[var_name] = [var_description, var_code_snip, var_type]
-
-def write_mdfile():
-    pass
+from scripts_processor import *
 
 # Tokens
 tokens = (
@@ -47,12 +8,9 @@ tokens = (
     'NAMESPACE', 
     'CLASS', 
 
-    # 'INHERITANCE',
     # 'MEMBERS', 
     # 'PROPERTIES', 
     # 'METHODS',
-    # 'CHARACTERS'
-    # 'CHARACTER'
 )
 
 # Regex
@@ -83,31 +41,37 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-def main():
-    lexer = lex.lex()
-    # open file
-    
+
+def generate_md_file(filename, lexer):
+
+    ser_members_dict = {}
+    class_values = []
+    namespace = ""
+
+
+    output_file = str(filename).split(".")[0] + ".md"
     file = open(filename, "r")
     data = file.read()
     
     lexer.input(data)
     file.close()
 
-
-
-    # Tokenize
+        # Tokenize
     while True:
         tok = lexer.token()
         if not tok:
             break      # No more input
 
         if (tok.type == 'SERIALIZEDMEMBER'):
-            process_ser_members_input(tok)
+            key, val = process_ser_members_input(tok)
+            ser_members_dict[key] = val
         elif (tok.type == 'CLASS'):
             class_values = processs_class_input(tok)
         elif (tok.type == 'NAMESPACE'):
             namespace = process_namespace_input(tok)
-        # print(tok.type, tok.value, tok.lineno, tok.lexpos)
+        
+        
+    # print(tok.type, tok.value, tok.lineno, tok.lexpos)
     print("Class values : " + str(class_values))
     print("Namespace : " + namespace)
     print(ser_members_dict)
@@ -121,6 +85,11 @@ def main():
 
         f.write(class_def_md)
 
+
+def main():
+    lexer = lex.lex()
+    # Get C# files and generate respective mds
+    generate_md_file("Test.cs", lexer)
 
 if __name__ == '__main__':
     main()
