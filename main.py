@@ -7,10 +7,10 @@ tokens = (
     'BRACKETS',
     'NAMESPACE', 
     'CLASS', 
+    'METHODS',
 
     # 'MEMBERS', 
     # 'PROPERTIES', 
-    # 'METHODS',
 )
 
 # Regex
@@ -25,6 +25,9 @@ def t_NAMESPACE(t):
     r'^namespace\s+([^\s{]+)'
     return t
 
+def t_METHODS(t):
+    r'\bpublic\s+\w+\s+\w+\s*\([^)]*\)\s*{'
+    return t
 
 def t_CLASS(t):
     r'\s*(public|private|internal|protected)?\s*(sealed|partial)?\s*class\s+([^\s{{}}]+)(?:\s*:\s*([^\s{{}}]+))?'
@@ -47,7 +50,7 @@ def generate_md_file(filename, lexer):
     ser_members_dict = {}
     class_values = []
     namespace = ""
-
+    methods_dict = {}
 
     output_file = str(filename).split(".")[0] + ".md"
     file = open(filename, "r")
@@ -69,19 +72,29 @@ def generate_md_file(filename, lexer):
             class_values = processs_class_input(tok)
         elif (tok.type == 'NAMESPACE'):
             namespace = process_namespace_input(tok)
+        elif (tok.type == 'METHODS'):
+            key, val = process_methods_input(tok)
+            methods_dict[key] = val
         
         
     # print(tok.type, tok.value, tok.lineno, tok.lexpos)
     print("Class values : " + str(class_values))
     print("Namespace : " + namespace)
     print(ser_members_dict)
+    print(methods_dict)
 
     with open(output_file, "w") as f:
-        class_def_md = f"## {class_values[0]} : {class_values[1]}\n### Namespace : {namespace}\n### DESCRIPTION\n{class_values[2]}\n"
+        class_def_md = f"# {class_values[0]} : {class_values[1]}\n## Namespace : {namespace}\n## DESCRIPTION\n{class_values[2]}\n"
         f.write(class_def_md)
-        class_def_md = f'### Properties\n'
+        class_def_md = f'## Properties\n'
         for var_name, var in ser_members_dict.items():
             class_def_md += f'`{var_name}` ({var[2]})\n\n{var[0]}\n```csharp\n{var[1]}\n```\n'
+
+        f.write(class_def_md)
+
+        class_def_md = f'## Methods\n'
+        for meth_name, meth in methods_dict.items():
+            class_def_md += f'`{meth_name}`\n\n{meth[0]}\n```csharp\n{meth[1]}\n```\n'
 
         f.write(class_def_md)
 

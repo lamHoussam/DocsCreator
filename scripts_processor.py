@@ -16,6 +16,19 @@ def processs_class_input(t):
 def process_namespace_input(t):
     return str(t.value).split(" ")[1]
 
+
+def process_methods_input(t):
+    method_snip = str(t.value)[0:-1]
+    el_arr = method_snip.split(" ")
+    
+    method_description = "My method"
+    method_name = el_arr[2]
+
+    if method_name[-1] == ')':
+        method_name = method_name[0:-2]
+
+    return method_name, [method_description, method_snip] 
+
 def process_ser_members_input(t):
     var_code_snip = str(t.value)
     el_arr = var_code_snip.split(" ")
