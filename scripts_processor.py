@@ -39,10 +39,6 @@ def process_methods_input(t):
 
 def process_ser_members_input(t):
     var_code_snip = str(t.value)
-    # el_arr = var_code_snip.split(" ")
-
-    # return (var_name, [var_description, var_code_snip, var_type])
-
     el_sides = var_code_snip.split(",")
     el_arr = el_sides[0].split(" ")
     var_type = el_arr[-2]

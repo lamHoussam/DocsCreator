@@ -9,23 +9,21 @@ folder_name = "API"
 
 # Tokens
 tokens = (
-    'BRACKETS',
+    'BRACKET',
     'NAMESPACE', 
     'CLASS', 
     'PROPERTY',
     'GETPROPERTY', # public Test Value => value;
     'SERIALIZEDMEMBER',
-    'MEMBERS', 
-    'METHODS',
+    'MEMBER', 
+    'METHOD',
 )
-# r'\s*(public\s+)(\w+)\s+(\w+)\s*;'
 # Regex
-# t_CHARACTER = r'[a-z]'
 def t_SERIALIZEDMEMBER(t):
     r'\[SerializeField\s*(?:,\s*[a-zA-Z0-9_]+\s*=\s*[^\]]+)?\]\s*(private\s+)?(\w+)\s+(\w+)(\s*,\s*\w+)*\s*;'
     return t
 
-def t_MEMBERS(t):
+def t_MEMBER(t):
     r'\s*(public\s+)(\w+)\s+(\w+)(\s*,\s*\w+)*\s*;'
 
     return t
@@ -38,19 +36,18 @@ def t_GETPROPERTY(t):
     r'public\s+\w+\s+\w+\s+=>\s+\w+;'
     return t
 
-t_BRACKETS = "[{}]"
+t_BRACKET = "[{}]"
 
 def t_NAMESPACE(t):
     r'^namespace\s+([^\s{]+)'
     return t
 
-def t_METHODS(t):
+def t_METHOD(t):
     r'\bpublic\s+\w+\s+\w+\s*\([^)]*\)\s*{'
     return t
 
 def t_CLASS(t):
     r'\s*(public|private|internal|protected)?\s*(sealed|partial|abstract)?\s*class\s+([^\s{}]+)(?:\s*:\s*([^\s{}]+))?'
-    # do stuff to extract name base and interfaces
     return t
 
 
@@ -80,7 +77,7 @@ def generate_md_file(file_path, lexer):
     lexer.input(data)
     file.close()
 
-        # Tokenize
+    # Tokenize
     while True:
         tok = lexer.token()
         if not tok:
@@ -90,7 +87,7 @@ def generate_md_file(file_path, lexer):
             arr = process_ser_members_input(tok)
             for key, val in arr:
                 members_dict[key] = val            
-        elif(tok.type == 'MEMBERS'):
+        elif(tok.type == 'MEMBER'):
             arr = process_public_members_input(tok)
             for key, val in arr:
                 members_dict[key] = val
@@ -104,12 +101,11 @@ def generate_md_file(file_path, lexer):
             class_values = processs_class_input(tok)
         elif (tok.type == 'NAMESPACE'):
             namespace = process_namespace_input(tok)
-        elif (tok.type == 'METHODS'):
+        elif (tok.type == 'METHOD'):
             key, val = process_methods_input(tok)
             methods_dict[key] = val
         
         
-    # print(tok.type, tok.value, tok.lineno, tok.lexpos)
     print("Class values : " + str(class_values))
     print("Namespace : " + namespace)
     print(members_dict)
@@ -152,7 +148,6 @@ def main():
     project_path = "./"
     recursive = False
     
-    # print(sys.argv)
     if len(sys.argv) == 2:
         project_path = sys.argv[1]
         if not path.exists(project_path):
