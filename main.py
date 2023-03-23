@@ -47,9 +47,9 @@ def t_METHOD(t):
     return t
 
 def t_CLASS(t):
-    r'\s*(public|private|internal|protected)?\s*(sealed|partial|abstract)?\s*class\s+([^\s{}]+)(?:\s*:\s*([^\s{}]+))?'
+    r'\s*(public|private|internal|protected)?\s*(sealed|partial|abstract)?\s*class\s+([^\s{}]+)(?:\s*:\s*([^\s,{}]+)(?:\s*,\s*([^\s,{}]+))*)?(?:\s*,\s*([^\s,{}]+)(?:\s*,\s*([^\s,{}]+))*)*\s*{'
+    # No interface implementation r'\s*(public|private|internal|protected)?\s*(sealed|partial|abstract)?\s*class\s+([^\s{}]+)(?:\s*:\s*([^\s{}]+))?'
     return t
-
 
 # Ignore
 t_ignore = ' \t\n\r'
@@ -114,7 +114,10 @@ def generate_md_file(file_path, lexer):
 
     with open(output_file, "w") as f:
         # Class definition
-        class_def_md = f"# {class_values[0]} : {class_values[1]}\n## Namespace : {namespace}\n## DESCRIPTION\n{class_values[2]}\n"
+        class_def_md = f"# {class_values[0]}\n## Namespace : `{namespace}`\n"
+        class_def_md += f"## Inherits\n{class_values[1]}\n"
+        class_def_md += f"## DESCRIPTION\n{class_values[3]}\n"
+        class_def_md += f"## Definition\n```csharp\n{class_values[4]}\n```\n"
         f.write(class_def_md)
         
         # Members definition

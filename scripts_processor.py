@@ -1,20 +1,28 @@
 def processs_class_input(t):
-    el_arr = str(t.value).split(" ")
-    ind = el_arr.index("class") + 1
+
+    class_snip = str(t.value)
+
+    el_sides = class_snip.split(":")
+    
+    inherits = len(el_sides) != 1
+    el_arr = el_sides[0].split(" ")
 
     is_abstract = "abstract" in el_arr
-    
-    class_name = el_arr[ind]
+    class_description = "My abstract class" if is_abstract else "My class"
 
-    base_class = ""
-    try:
-        ind = el_arr.index(":") + 1
-        base_class = el_arr[ind]
-    except ValueError:
-        pass
+    ind = el_arr.index("class") + 1
+    class_name = el_arr[ind]
     
-    class_description = "My Abstract class" if is_abstract else "My Class"
-    return [class_name, base_class, class_description]
+    inherit_values = el_sides[1].split(",") if inherits else []
+    class_inheritance = []
+    for val in inherit_values:
+        class_inheritance.append(val.strip(" {,\n"))
+
+    class_snip = class_snip.strip("{\n")
+
+    return [class_name, class_inheritance, is_abstract, class_description, class_snip]
+
+
 
 def process_namespace_input(t):
     return str(t.value).split(" ")[1]
@@ -27,7 +35,7 @@ def process_methods_input(t):
     method_description = "My method"
     method_name = el_arr[2]
 
-    method_name.replace(" ", "")
+    method_name.strip()
 
     try:
         ind = method_name.index("(")
@@ -43,13 +51,13 @@ def process_ser_members_input(t):
     el_arr = el_sides[0].split(" ")
     var_type = el_arr[-2]
     var_description = "Ser Member"
-    var_name = el_arr[-1].replace(";", "")
+    var_name = el_arr[-1].strip("; ")
 
     var_code_snip = "[SerializeField] private " + var_type
 
     vars = [(var_name, [var_description, var_code_snip + " " + var_name + ";", var_type])]
     for i in range(1, len(el_sides)):
-        el = el_sides[i].replace(" ", "").replace(";", "")
+        el = el_sides[i].strip("; ")
         vars.append((el, [var_description, var_code_snip + " " + el + ";", var_type]))
 
     return vars
@@ -62,13 +70,13 @@ def process_public_members_input(t):
     el_arr = el_sides[0].split(" ")
     var_type = el_arr[-2]
     var_description = "Public Member"
-    var_name = el_arr[-1].replace(";", "")
+    var_name = el_arr[-1].strip("; ")
 
     var_code_snip = "public " + var_type
 
     vars = [(var_name, [var_description, var_code_snip + " " + var_name + ";", var_type])]
     for i in range(1, len(el_sides)):
-        el = el_sides[i].replace(" ", "").replace(";", "")
+        el = el_sides[i].strip("; ")
         vars.append((el, [var_description, var_code_snip + " " + el + ";", var_type]))
 
     return vars
