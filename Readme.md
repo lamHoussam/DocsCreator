@@ -8,7 +8,7 @@ To use the script, clone the repository
 ```
 git clone https://github.com/lamHoussam/DocsCreator.git
 ``` 
-then navigate to project folder and open a terminal and run 
+then navigate to it and open a terminal and run 
 ```
 pip install -r requirements.txt
 ```

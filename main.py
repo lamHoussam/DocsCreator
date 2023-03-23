@@ -9,20 +9,33 @@ folder_name = "API"
 
 # Tokens
 tokens = (
-    'SERIALIZEDMEMBER',
     'BRACKETS',
     'NAMESPACE', 
     'CLASS', 
+    'PROPERTY',
+    'GETPROPERTY', # public Test Value => value;
+    'SERIALIZEDMEMBER',
+    'MEMBERS', 
     'METHODS',
-
-    # 'MEMBERS', 
-    # 'PROPERTIES', 
 )
-
+# r'\s*(public\s+)(\w+)\s+(\w+)\s*;'
 # Regex
 # t_CHARACTER = r'[a-z]'
 def t_SERIALIZEDMEMBER(t):
-    r'\[SerializeField\s*(?:,\s*[a-zA-Z0-9_]+\s*=\s*[^\]]+)?\]\s*(private\s+)?(\w+)\s+(\w+)\s*;'
+    r'\[SerializeField\s*(?:,\s*[a-zA-Z0-9_]+\s*=\s*[^\]]+)?\]\s*(private\s+)?(\w+)\s+(\w+)(\s*,\s*\w+)*\s*;'
+    return t
+
+def t_MEMBERS(t):
+    r'\s*(public\s+)(\w+)\s+(\w+)(\s*,\s*\w+)*\s*;'
+
+    return t
+
+def t_PROPERTY(t):
+    r'\s*(public\s+)(static\s+)?(readonly\s+)?(?!class)(\s+\w+\s+)?(\w+)\s+(\w+)\s*{[^}]*}'
+    return t
+
+def t_GETPROPERTY(t):
+    r'public\s+\w+\s+\w+\s+=>\s+\w+;'
     return t
 
 t_BRACKETS = "[{}]"
@@ -46,14 +59,15 @@ t_ignore = ' \t\n\r'
 
 # Error handling rule
 def t_error(t):
-    # print("Illegal character '%s'" % t.value[0])
+    print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 
 
 def generate_md_file(file_path, lexer):
 
-    ser_members_dict = {}
+    members_dict = {}
+    properties_dict = {}
     class_values = []
     namespace = ""
     methods_dict = {}
@@ -75,7 +89,16 @@ def generate_md_file(file_path, lexer):
 
         if (tok.type == 'SERIALIZEDMEMBER'):
             key, val = process_ser_members_input(tok)
-            ser_members_dict[key] = val
+            members_dict[key] = val
+        elif(tok.type == 'MEMBERS'):
+            key, val = process_public_members_input(tok)
+            members_dict[key] = val
+        elif (tok.type == 'PROPERTY'):
+            key, val = process_property_input(tok)
+            properties_dict[key] = val
+        elif tok.type == 'GETPROPERTY':
+            key, val = process_get_property(tok)
+            properties_dict[key] = val
         elif (tok.type == 'CLASS'):
             class_values = processs_class_input(tok)
         elif (tok.type == 'NAMESPACE'):
@@ -88,18 +111,30 @@ def generate_md_file(file_path, lexer):
     # print(tok.type, tok.value, tok.lineno, tok.lexpos)
     print("Class values : " + str(class_values))
     print("Namespace : " + namespace)
-    print(ser_members_dict)
+    print(members_dict)
+    print(properties_dict)
     print(methods_dict)
 
     with open(output_file, "w") as f:
+        # Class definition
         class_def_md = f"# {class_values[0]} : {class_values[1]}\n## Namespace : {namespace}\n## DESCRIPTION\n{class_values[2]}\n"
         f.write(class_def_md)
-        class_def_md = f'## Properties\n'
-        for var_name, var in ser_members_dict.items():
+        
+        # Members definition
+        class_def_md = f'## Members\n'
+        for var_name, var in members_dict.items():
             class_def_md += f'`{var_name}` ({var[2]})\n\n{var[0]}\n```csharp\n{var[1]}\n```\n'
 
         f.write(class_def_md)
 
+        # Properties definition
+        class_def_md = f'## Properties\n'
+        for var_name, var in properties_dict.items():
+            class_def_md += f'`{var_name}` ({var[2]})\n\n{var[0]}\n```csharp\n{var[1]}\n```\n'
+
+        f.write(class_def_md)
+
+        # Methods definition
         class_def_md = f'## Methods\n'
         for meth_name, meth in methods_dict.items():
             class_def_md += f'`{meth_name}`\n\n{meth[0]}\n```csharp\n{meth[1]}\n```\n'
