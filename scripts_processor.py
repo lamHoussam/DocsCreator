@@ -1,6 +1,9 @@
 def processs_class_input(t):
     el_arr = str(t.value).split(" ")
     ind = el_arr.index("class") + 1
+
+    is_abstract = "abstract" in el_arr
+    
     class_name = el_arr[ind]
 
     base_class = ""
@@ -10,7 +13,7 @@ def processs_class_input(t):
     except ValueError:
         pass
     
-    class_description = "My Class"    
+    class_description = "My Abstract class" if is_abstract else "My Class"
     return [class_name, base_class, class_description]
 
 def process_namespace_input(t):

@@ -49,7 +49,7 @@ def t_METHODS(t):
     return t
 
 def t_CLASS(t):
-    r'\s*(public|private|internal|protected)?\s*(sealed|partial)?\s*class\s+([^\s{{}}]+)(?:\s*:\s*([^\s{{}}]+))?'
+    r'\s*(public|private|internal|protected)?\s*(sealed|partial|abstract)?\s*class\s+([^\s{}]+)(?:\s*:\s*([^\s{}]+))?'
     # do stuff to extract name base and interfaces
     return t
 
@@ -65,7 +65,6 @@ def t_error(t):
 
 
 def generate_md_file(file_path, lexer):
-
     members_dict = {}
     properties_dict = {}
     class_values = []
