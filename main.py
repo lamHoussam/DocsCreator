@@ -43,7 +43,7 @@ def t_NAMESPACE(t):
     return t
 
 def t_METHOD(t):
-    r'\bpublic\s+\w+\s+\w+\s*\([^)]*\)\s*{'
+    r'\bpublic\s+(?:(?:virtual|abstract|override)\s+)?\w+\s+\w+\(.*\)\s*'
     return t
 
 def t_CLASS(t):
@@ -116,7 +116,7 @@ def generate_md_file(file_path, lexer):
         # Class definition
         class_def_md = f"# {class_values[0]}\n## Namespace : `{namespace}`\n"
         class_def_md += f"## Inherits\n{class_values[1]}\n"
-        class_def_md += f"## DESCRIPTION\n{class_values[3]}\n"
+        class_def_md += f"## Descrition\n{class_values[3]}\n"
         class_def_md += f"## Definition\n```csharp\n{class_values[4]}\n```\n"
         f.write(class_def_md)
         
@@ -137,7 +137,13 @@ def generate_md_file(file_path, lexer):
         # Methods definition
         class_def_md = f'## Methods\n'
         for meth_name, meth in methods_dict.items():
-            class_def_md += f'`{meth_name}`\n\n{meth[0]}\n```csharp\n{meth[1]}\n```\n'
+            has_args = len(meth[4]) != 0
+            class_def_md += f'`{meth_name}` ({meth[6]})\n\n   * {meth[0]}\n\n' + ('### Arguments\n' if has_args else '')
+            if has_args:
+                for arg in meth[4]:
+                    class_def_md += f'  * `{arg[1]}` ({arg[0]})\n\n'
+                    class_def_md += f'      * My Arg description\n\n'
+            class_def_md += f'```csharp\n{meth[5]}\n```\n'
 
         f.write(class_def_md)
 

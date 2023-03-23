@@ -29,24 +29,52 @@ def process_namespace_input(t):
 
 
 def process_methods_input(t):
-    method_snip = str(t.value)[0:-1]
-    el_arr = method_snip.split(" ")
+    # method_snip = str(t.value)[0:-1]
+    # el_arr = method_snip.split(" ")
     
-    method_description = "My method"
-    method_name = el_arr[2]
+    # method_description = "My method"
+    # method_name = el_arr[2]
 
-    method_name.strip()
+    # method_name.strip()
 
-    try:
-        ind = method_name.index("(")
-        method_name = method_name[0:ind]
-    except ValueError:
-        pass
+    # try:
+    #     ind = method_name.index("(")
+    #     method_name = method_name[0:ind]
+    # except ValueError:
+    #     pass
 
-    return method_name, [method_description, method_snip+";"] 
+    # return method_name, [method_description, method_snip+";"] 
+
+    method_snip = str(t.value)
+    method_snip = method_snip.strip("{")
+
+
+    el_sides = method_snip.split("(")
+
+    el_arr = el_sides[0].split(" ")
+
+    method_name = el_arr[-1]
+    method_type = el_arr[-2]
+
+    is_virtual  = "virtual"  in el_arr
+    is_abstract = "abstract" in el_arr
+    is_override = "override" in el_arr
+
+    method_description = "My " + ("virtual " if is_virtual else "") + ("abstract " if is_abstract else "") + "Method"
+
+    args_arr_init = el_sides[1].split(",")
+    args_arr = []
+    for arg in args_arr_init:
+        elements = arg.split(" ")
+        elements = [x.strip(")") for x in elements if x]
+        if elements != ['']:
+            args_arr.append(elements) 
+
+    return method_name, [method_description, is_virtual, is_abstract, is_override, args_arr, method_snip, method_type]
 
 def process_ser_members_input(t):
     var_code_snip = str(t.value)
+
     el_sides = var_code_snip.split(",")
     el_arr = el_sides[0].split(" ")
     var_type = el_arr[-2]
