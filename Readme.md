@@ -1,6 +1,6 @@
 # DocsCreator
 
-This is a Python script that generates documentation for C# files. It uses the PLY library to tokenize C# files and extract relevant information such as class definitions, method signatures, and serialized member definitions. The script then generates Markdown files for each C# file in a specified folder.
+This is a Python script that generates documentation for C# files. It uses the PLY library to tokenize C# files and extract relevant information such as class definitions, public method signatures, serialized and public member definitions, and public properties. The script then generates Markdown files for each C# file in a specified folder.
 
 
 ## Usage
@@ -24,18 +24,25 @@ When you run the script, it will generate Markdown files for each C# file in the
 
 
 ## Generated Markdown
-Each Markdown file will have the following sections:
+Each Markdown file will has the following sections:
 
 * Class definition
-* Properties (serialized members)
-* Methods
+* Serialized Members
+* Public Members
+* Public Properties 
+* Public Methods
 
-The class definition will include the class name, base class (if any), and description (if any).
+The class definition will include the class name, base class (if any), implemented interfaces (if any) and description (if any).
 
-The properties section will include a list of serialized members (i.e. private fields marked with the `[SerializeField]` attribute), along with their types and descriptions.
+The serialized members section will include a list of serialized members (i.e. private fields marked with the `[SerializeField]` attribute), along with their types and descriptions.
 
-The methods section will include a list of public methods, along with their signatures and descriptions (if any).
+The public members section will include a list of public members, along with their types and descriptions.
 
+The properties section will include a list of public properties 
+(i.e. ```public float Value => value``` or `public int Test { get; set; }`)
+, along with their types and descriptions.
+
+The methods section will include a list of public methods, along with their signatures and descriptions.
 
 ## Contributing
 
