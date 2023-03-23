@@ -88,11 +88,13 @@ def generate_md_file(file_path, lexer):
             break      # No more input
 
         if (tok.type == 'SERIALIZEDMEMBER'):
-            key, val = process_ser_members_input(tok)
-            members_dict[key] = val
+            arr = process_ser_members_input(tok)
+            for key, val in arr:
+                members_dict[key] = val            
         elif(tok.type == 'MEMBERS'):
-            key, val = process_public_members_input(tok)
-            members_dict[key] = val
+            arr = process_public_members_input(tok)
+            for key, val in arr:
+                members_dict[key] = val
         elif (tok.type == 'PROPERTY'):
             key, val = process_property_input(tok)
             properties_dict[key] = val

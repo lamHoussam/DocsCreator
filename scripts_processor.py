@@ -36,21 +36,43 @@ def process_methods_input(t):
 
 def process_ser_members_input(t):
     var_code_snip = str(t.value)
-    el_arr = var_code_snip.split(" ")
-    var_name = el_arr[-1][0:-1]
+    # el_arr = var_code_snip.split(" ")
+
+    # return (var_name, [var_description, var_code_snip, var_type])
+
+    el_sides = var_code_snip.split(",")
+    el_arr = el_sides[0].split(" ")
     var_type = el_arr[-2]
     var_description = "Ser Member"
+    var_name = el_arr[-1].replace(";", "")
 
-    return (var_name, [var_description, var_code_snip, var_type])
+    var_code_snip = "[SerializeField] private " + var_type
+
+    vars = [(var_name, [var_description, var_code_snip + " " + var_name + ";", var_type])]
+    for i in range(1, len(el_sides)):
+        el = el_sides[i].replace(" ", "").replace(";", "")
+        vars.append((el, [var_description, var_code_snip + " " + el + ";", var_type]))
+
+    return vars
+
 
 def process_public_members_input(t):
     var_code_snip = str(t.value)
-    el_arr = var_code_snip.split(" ")
-    var_name = el_arr[-1][0:-1]
+
+    el_sides = var_code_snip.split(",")
+    el_arr = el_sides[0].split(" ")
     var_type = el_arr[-2]
     var_description = "Public Member"
+    var_name = el_arr[-1].replace(";", "")
 
-    return (var_name, [var_description, var_code_snip, var_type])
+    var_code_snip = "public " + var_type
+
+    vars = [(var_name, [var_description, var_code_snip + " " + var_name + ";", var_type])]
+    for i in range(1, len(el_sides)):
+        el = el_sides[i].replace(" ", "").replace(";", "")
+        vars.append((el, [var_description, var_code_snip + " " + el + ";", var_type]))
+
+    return vars
 
 
 def process_property_input(t):
