@@ -29,21 +29,11 @@ def process_namespace_input(t):
 
 
 def process_methods_input(t):
-    # method_snip = str(t.value)[0:-1]
-    # el_arr = method_snip.split(" ")
-    
-    # method_description = "My method"
-    # method_name = el_arr[2]
 
-    # method_name.strip()
+    meth_def = str(t.value)
+    if '=>' in meth_def:
+        t.value = meth_def.split("=>")[0]
 
-    # try:
-    #     ind = method_name.index("(")
-    #     method_name = method_name[0:ind]
-    # except ValueError:
-    #     pass
-
-    # return method_name, [method_description, method_snip+";"] 
 
     method_snip = str(t.value)
     method_snip = method_snip.strip("{")
