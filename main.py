@@ -39,7 +39,7 @@ def t_GETPROPERTY(t):
 t_BRACKET = "[{}]"
 
 def t_NAMESPACE(t):
-    r'^namespace\s+([^\s{]+)'
+    r'\bnamespace\s+([^\s{]+)'
     return t
 
 def t_METHOD(t):
@@ -56,7 +56,7 @@ t_ignore = ' \t\n\r'
 
 # Error handling rule
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    # print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 
@@ -140,9 +140,10 @@ def generate_md_file(file_path, lexer):
             has_args = len(meth[4]) != 0
             class_def_md += f'`{meth_name}` ({meth[6]})\n\n   * {meth[0]}\n\n' + ('### Arguments\n' if has_args else '')
             if has_args:
+                print("Args found : " + str(meth[4]))
                 for arg in meth[4]:
                     class_def_md += f'  * `{arg[1]}` ({arg[0]})\n\n'
-                    class_def_md += f'      * My Arg description\n\n'
+                    class_def_md += f'      * My Arg description\n'
             class_def_md += f'```csharp\n{meth[5]}\n```\n'
 
         f.write(class_def_md)

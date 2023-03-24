@@ -11,7 +11,7 @@ def processs_class_input(t):
     class_description = "My abstract class" if is_abstract else "My class"
 
     ind = el_arr.index("class") + 1
-    class_name = el_arr[ind]
+    class_name = el_arr[ind].strip("{")
     
     inherit_values = el_sides[1].split(",") if inherits else []
     class_inheritance = []
@@ -25,6 +25,7 @@ def processs_class_input(t):
 
 
 def process_namespace_input(t):
+    print("Namespace got : " + t.value)
     return str(t.value).split(" ")[1]
 
 
@@ -56,7 +57,7 @@ def process_methods_input(t):
     args_arr = []
     for arg in args_arr_init:
         elements = arg.split(" ")
-        elements = [x.strip(")") for x in elements if x]
+        elements = [x.strip(")\n{)") for x in elements if x]
         if elements != ['']:
             args_arr.append(elements) 
 
