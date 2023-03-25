@@ -18,7 +18,7 @@ then execute a simple
 python main.py [--option] <project_path>
 ```
 
-The script is designed to generate documentation for C# files in your project folder (you can chose to make it recursive). You can change this folder name by modifying the folder_name variable in the csharp_doc_gen.py file.
+The script is designed to generate documentation for C# files in your project folder (you can chose to make it recursive). You can change the output folder name by modifying the folder_name variable in the main.py file.
 
 When you run the script, it will generate Markdown files for each C# file in the specified folder. The Markdown files will be named after the C# files with a .md extension.
 
