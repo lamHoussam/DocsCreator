@@ -3,9 +3,10 @@ from scripts_processor import *
 
 from os import makedirs, path
 from glob import glob
-import sys
 
-folder_name = "API"
+import argparse
+
+folder_name = "TESTAPI"
 
 # Tokens
 tokens = (
@@ -66,7 +67,7 @@ def generate_md_file(file_path, lexer):
     properties_dict = {}
     class_values = []
     namespace = ""
-    methods_dict = {}
+    methods_list = []
 
     filename = path.basename(file_path)
 
@@ -103,14 +104,15 @@ def generate_md_file(file_path, lexer):
             namespace = process_namespace_input(tok)
         elif (tok.type == 'METHOD'):
             key, val = process_methods_input(tok)
-            methods_dict[key] = val
+            methods_list.append((key, val))
+            # methods_dict[key] = val
         
         
     print("Class values : " + str(class_values))
     print("Namespace : " + namespace)
     print(members_dict)
     print(properties_dict)
-    print(methods_dict)
+    print(methods_list)
 
     with open(output_file, "w") as f:
         # Class definition
@@ -136,7 +138,7 @@ def generate_md_file(file_path, lexer):
 
         # Methods definition
         class_def_md = f'## Methods\n'
-        for meth_name, meth in methods_dict.items():
+        for meth_name, meth in methods_list:
             has_args = len(meth[4]) != 0
             class_def_md += f'`{meth_name}` ({meth[6]})\n\n   * {meth[0]}\n\n' + ('### Arguments\n' if has_args else '')
             if has_args:
@@ -148,28 +150,23 @@ def generate_md_file(file_path, lexer):
 
         f.write(class_def_md)
 
-def usage():
-    print("Usage : \npython main.py [--options] <project_path>")
-
-
 def main():
     lexer = lex.lex()
 
     project_path = "./"
     recursive = False
+
+    parser = argparse.ArgumentParser(description='Create markdown documentation for C# project')
     
-    if len(sys.argv) == 2:
-        project_path = sys.argv[1]
-        if not path.exists(project_path):
-            usage()
-            exit(1)
-    elif len(sys.argv) >= 3:
-        if sys.argv[1] == "--recursive":
-            recursive = True
-        project_path = sys.argv[2]
-        if not path.exists(project_path):
-            usage()
-            exit(1)
+    parser.add_argument('--recursive', action='store_true', dest='recursive')
+    parser.add_argument('project_path', action='store', default='./')
+
+    args = parser.parse_args()
+    project_path = args.project_path
+    recursive = args.recursive
+
+    print(project_path)
+    print(recursive)
     
     directory = folder_name
 

@@ -2,6 +2,8 @@
 *.md
 API/*
 
+TESTAPI/*
+
 !/Readme.md
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -15,7 +15,16 @@ pip install -r requirements.txt
 then execute a simple 
 
 ```
-python main.py [--option] <project_path>
+usage: main.py [-h] [--recursive] project_path
+
+Create markdown documentation for C# project
+
+positional arguments:
+  project_path
+
+optional arguments:
+  -h, --help    show this help message and exit
+  --recursive
 ```
 
 The script is designed to generate documentation for C# files in your project folder (you can chose to make it recursive). You can change this folder name by modifying the folder_name variable in the csharp_doc_gen.py file.
